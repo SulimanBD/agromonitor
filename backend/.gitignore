@@ -1,0 +1,35 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Django
+*.log
+*.pot
+*.pyc
+*.pyo
+*.sqlite3
+*.db
+
+# Media / Static
+/media
+/staticfiles
+/static_root/
+
+# Virtualenvs (if located inside backend)
+venv/
+ENV/
+.venv/
+
+# Migrations
+**/migrations/*.pyc
+**/migrations/*.pyo
+**/migrations/__pycache__/
+**/migrations/*.py
+
+# Environment variables
+.env
+
+# IDEs (if located inside backend)
+.vscode/
+.idea/

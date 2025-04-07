@@ -1,0 +1,30 @@
+# Virtualenvs
+venv/
+ENV/
+env/
+.venv/
+
+# .env files
+.env
+.env.*
+
+# IDEs and OS
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
+
+# Node modules (for frontend)
+frontend/node_modules/
+
+# Docker
+*.pid
+*.pid.lock
+
+# Logs
+*.log
+
+# OS generated files
+ehthumbs.db
+Icon?
+Desktop.ini
