@@ -6,6 +6,11 @@ from .models import Device, SensorReading
 # Set up the logger
 logger = logging.getLogger(__name__)
 
+class DeviceSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Device
+        fields = ['device_id', 'name', 'location', 'status']
+
 class SensorReadingSerializer(serializers.ModelSerializer):
     device_id = serializers.CharField(write_only=True)
 
