@@ -1,21 +1,14 @@
-import os
 import paho.mqtt.client as mqtt
 import redis
 import json
 import logging
 from time import sleep
 
+from simulator.config import REDIS_HOST, REDIS_PORT, MQTT_BROKER, MQTT_PORT, MQTT_TOPIC
+
 # Setup logging
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
-
-# Read configuration from environment variables (cloud-friendly)
-mqtt_broker = os.getenv("MQTT_BROKER", "localhost")
-mqtt_port = int(os.getenv("MQTT_PORT", 1883))
-mqtt_topic = os.getenv("MQTT_TOPIC", "sensors/#")
-
-redis_host = os.getenv("REDIS_HOST", "localhost")
-redis_port = int(os.getenv("REDIS_PORT", 6379))
 
 # Define Redis client globally so it can be accessed across functions
 redis_client = None
@@ -29,7 +22,7 @@ def on_message(client, userdata, message):
         
         # Publish the message to Redis Stream
         if redis_client:
-            redis_client.xadd("sensor_stream", sensor_data)
+            redis_client.xadd("sensor_readings", sensor_data)
             logger.info(f"Data added to Redis stream: {sensor_data}")
         else:
             logger.error("Redis client is not initialized.")
@@ -44,9 +37,9 @@ client.on_message = on_message
 def mqtt_connect():
     while True:
         try:
-            logger.info(f"Connecting to MQTT Broker at {mqtt_broker}:{mqtt_port}")
-            client.connect(mqtt_broker, mqtt_port, 60)
-            client.subscribe(mqtt_topic)
+            logger.info(f"Connecting to MQTT Broker at {MQTT_BROKER}:{MQTT_PORT}")
+            client.connect(MQTT_BROKER, MQTT_PORT, 60)
+            client.subscribe(MQTT_TOPIC)
             break  # Break loop if connection is successful
         except Exception as e:
             logger.error(f"Failed to connect to MQTT Broker: {e}")
@@ -57,8 +50,8 @@ def redis_connect():
     global redis_client
     while True:
         try:
-            logger.info(f"Connecting to Redis at {redis_host}:{redis_port}")
-            redis_client = redis.Redis(host=redis_host, port=redis_port, db=0)
+            logger.info(f"Connecting to Redis at {REDIS_HOST}:{REDIS_PORT}")
+            redis_client = redis.Redis(host=REDIS_HOST, port=REDIS_PORT, db=0)
             redis_client.ping()  # Check if Redis is available
             break  # Break loop if connection is successful
         except redis.exceptions.ConnectionError as e:

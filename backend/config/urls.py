@@ -16,7 +16,6 @@ Including another URLconf
 # config/urls.py
 from django.contrib import admin
 from django.urls import path, include
-from . import views
 
 urlpatterns = [
     path('admin/', admin.site.urls),  # ← Admin route is safe to keep
