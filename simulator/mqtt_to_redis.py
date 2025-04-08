@@ -4,7 +4,7 @@ import json
 import logging
 from time import sleep
 
-from simulator.config import REDIS_HOST, REDIS_PORT, MQTT_BROKER, MQTT_PORT, MQTT_TOPIC
+from config import REDIS_HOST, REDIS_PORT, MQTT_BROKER, MQTT_PORT, MQTT_TOPIC
 
 # Setup logging
 logging.basicConfig(level=logging.INFO)

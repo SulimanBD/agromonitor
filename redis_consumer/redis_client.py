@@ -1,6 +1,6 @@
 import redis
-from redis_consumer.config import REDIS_HOST, REDIS_PORT
-from redis_consumer.logger_config import get_logger
+from config import REDIS_HOST, REDIS_PORT
+from logger_config import get_logger
 
 logger = get_logger(__name__)
 

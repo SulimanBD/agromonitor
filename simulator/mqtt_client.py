@@ -1,5 +1,5 @@
 import paho.mqtt.client as mqtt
-from simulator.config import MQTT_BROKER, MQTT_PORT
+from config import MQTT_BROKER, MQTT_PORT
 
 def connect_mqtt():
     client = mqtt.Client()

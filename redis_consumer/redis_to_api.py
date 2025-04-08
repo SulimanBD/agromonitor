@@ -1,8 +1,8 @@
 import time
 import requests
-from redis_consumer.redis_client import get_redis_connection
-from redis_consumer.config import REDIS_STREAM, API_ENDPOINT
-from redis_consumer.logger_config import get_logger
+from redis_client import get_redis_connection
+from config import REDIS_STREAM, API_ENDPOINT
+from logger_config import get_logger
 
 logger = get_logger(__name__)
 

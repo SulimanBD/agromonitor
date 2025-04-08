@@ -4,6 +4,8 @@ from rest_framework.filters import OrderingFilter
 from django_filters.rest_framework import DjangoFilterBackend
 from .models import SensorReading, Device
 from .serializers import SensorReadingSerializer, DeviceSerializer
+from channels.layers import get_channel_layer
+from asgiref.sync import async_to_sync
 
 class SensorReadingViewSet(viewsets.ModelViewSet):
     queryset = SensorReading.objects.all()
@@ -24,6 +26,25 @@ class SensorReadingViewSet(viewsets.ModelViewSet):
             queryset = queryset.filter(timestamp__lte=parse_datetime(end))
 
         return queryset
+    
+    def perform_create(self, serializer):
+        # Save the sensor reading to the DB
+        sensor_reading = serializer.save()
+
+        # Send the new sensor reading to WebSocket
+        self.broadcast_to_websocket(sensor_reading)
+
+    def broadcast_to_websocket(self, sensor_reading):
+        # Send the sensor reading data to WebSocket
+        # Send to WebSocket group
+        channel_layer = get_channel_layer()
+        async_to_sync(channel_layer.group_send)(
+            "sensor_readings",
+            {
+                "type": "send_sensor_data",
+                "data": self.get_serializer(sensor_reading).data,
+            }
+        )
 
 class DeviceViewSet(viewsets.ModelViewSet):
     queryset = Device.objects.all()
