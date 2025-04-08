@@ -29,10 +29,17 @@ class Device(models.Model):
 
 
 class SensorReading(models.Model):
-    device = models.ForeignKey(Device, on_delete=models.CASCADE)
-    timestamp = models.DateTimeField()
+    device = models.ForeignKey(Device, on_delete=models.CASCADE, db_index=True)  # Ensure indexed
+    timestamp = models.DateTimeField(db_index=True)  # Index for range filtering
+
     temperature = models.FloatField(null=True, blank=True)
     humidity = models.FloatField(null=True, blank=True)
     light = models.IntegerField(null=True, blank=True)
     air_quality = models.FloatField(null=True, blank=True)
     soil_moisture = models.FloatField(null=True, blank=True)
+
+    class Meta:
+        indexes = [
+            models.Index(fields=['timestamp']),
+            models.Index(fields=['device', 'timestamp']),
+        ]

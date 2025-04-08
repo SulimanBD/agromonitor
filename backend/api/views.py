@@ -6,6 +6,7 @@ from .models import SensorReading, Device
 from .serializers import SensorReadingSerializer, DeviceSerializer
 from channels.layers import get_channel_layer
 from asgiref.sync import async_to_sync
+from django.utils.dateparse import parse_datetime
 
 class SensorReadingViewSet(viewsets.ModelViewSet):
     queryset = SensorReading.objects.all()
@@ -16,14 +17,17 @@ class SensorReadingViewSet(viewsets.ModelViewSet):
     ordering = ['-timestamp']  # Default ordering
 
     def get_queryset(self):
-        queryset = super().get_queryset()
         start = self.request.query_params.get('start')
         end = self.request.query_params.get('end')
 
+        filters = {}
         if start:
-            queryset = queryset.filter(timestamp__gte=parse_datetime(start))
+            filters['timestamp__gte'] = parse_datetime(start)
         if end:
-            queryset = queryset.filter(timestamp__lte=parse_datetime(end))
+            filters['timestamp__lte'] = parse_datetime(end)
+
+        # Filter + join device table in one go
+        queryset = SensorReading.objects.select_related('device').filter(**filters)
 
         return queryset
     
