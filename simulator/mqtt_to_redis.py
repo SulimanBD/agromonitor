@@ -3,8 +3,7 @@ import redis
 import json
 import logging
 from time import sleep
-
-from config import REDIS_HOST, REDIS_PORT, MQTT_BROKER, MQTT_PORT, MQTT_TOPIC
+from config import REDIS_HOST, REDIS_PORT, REDIS_STREAM, MQTT_BROKER, MQTT_PORT, MQTT_TOPIC
 
 # Setup logging
 logging.basicConfig(level=logging.INFO)
@@ -22,7 +21,7 @@ def on_message(client, userdata, message):
         
         # Publish the message to Redis Stream
         if redis_client:
-            redis_client.xadd("sensor_readings", sensor_data)
+            redis_client.xadd(REDIS_STREAM, sensor_data)
             logger.info(f"Data added to Redis stream: {sensor_data}")
         else:
             logger.error("Redis client is not initialized.")
