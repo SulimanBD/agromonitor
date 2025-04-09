@@ -1,6 +1,4 @@
-from decouple import Config, Csv
-
-config = Config()
+from decouple import config
 
 REDIS_HOST = config("REDIS_HOST", default="localhost")
 REDIS_PORT = config("REDIS_PORT", cast=int, default=6379)
