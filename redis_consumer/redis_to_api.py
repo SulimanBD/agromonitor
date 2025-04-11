@@ -39,7 +39,7 @@ def consume_stream():
     while True:
         try:
             # Reading from the Redis stream
-            messages = redis_conn.xread({REDIS_STREAM: last_id}, block=5000, count=10)
+            messages = redis_conn.xread({REDIS_STREAM: last_id}, block=1000, count=10)
             if messages:
                 for stream, entries in messages:
                     for message_id, data in entries:

@@ -16,8 +16,12 @@ Including another URLconf
 # config/urls.py
 from django.contrib import admin
 from django.urls import path, include
+from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView
 
 urlpatterns = [
     path('admin/', admin.site.urls),  # ← Admin route is safe to keep
     path('api/', include('api.urls')),
+    # Authentication routes\
+    path('auth/token/', TokenObtainPairView.as_view(), name='token_obtain_pair'),
+    path('auth/token/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
 ]
