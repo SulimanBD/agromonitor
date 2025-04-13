@@ -1,6 +1,5 @@
 # api/views.py
 from rest_framework import viewsets
-from rest_framework.filters import OrderingFilter
 from django_filters.rest_framework import DjangoFilterBackend
 from .models import SensorReading, Device
 from .serializers import SensorReadingSerializer, DeviceSerializer
@@ -8,30 +7,78 @@ from channels.layers import get_channel_layer
 from asgiref.sync import async_to_sync
 from django.utils.dateparse import parse_datetime
 from rest_framework_simplejwt.views import TokenObtainPairView
+from django.db import connection
+from rest_framework.response import Response
+from rest_framework.decorators import action
 
 class SensorReadingViewSet(viewsets.ModelViewSet):
     queryset = SensorReading.objects.all()
     serializer_class = SensorReadingSerializer
-    filter_backends = [DjangoFilterBackend, OrderingFilter]
-    filterset_fields = ['device__device_id']
-    ordering_fields = ['timestamp']
-    ordering = ['-timestamp']  # Default ordering
+    filter_backends = []  # Disable filtering and ordering globally for this view
 
-    def get_queryset(self):
-        start = self.request.query_params.get('start')
-        end = self.request.query_params.get('end')
+    @action(detail=False, methods=['get'])
+    def aggregated_readings(self, request):
+        start = request.query_params.get('start')
+        end = request.query_params.get('end')
+        device_id = request.query_params.get('device__device_id')
+        max_points = 50
 
-        filters = {}
-        if start:
-            filters['timestamp__gte'] = parse_datetime(start)
-        if end:
-            filters['timestamp__lte'] = parse_datetime(end)
+        # Validate input
+        if not start or not end or not device_id:
+            return Response({"error": "Missing required parameters: start, end, or device__device_id"}, status=400)
 
-        # Filter + join device table in one go
-        queryset = SensorReading.objects.select_related('device').filter(**filters)
+        # Parse and calculate bucket size
+        start_time = parse_datetime(start)
+        end_time = parse_datetime(end)
 
-        return queryset
-    
+        if not start_time or not end_time:
+            return Response({"error": "Invalid start or end time format"}, status=400)
+
+        total_seconds = (end_time - start_time).total_seconds()
+        bucket_size_seconds = max(total_seconds // max_points, 1)
+        bucket_size = f"{int(bucket_size_seconds)} seconds"
+
+        # Execute raw SQL
+        with connection.cursor() as cursor:
+            cursor.execute(f"""
+                SELECT
+                    time_bucket(%s, timestamp) AS bucket,
+                    AVG(temperature) AS avg_temperature,
+                    AVG(humidity) AS avg_humidity,
+                    AVG(light) AS avg_light,
+                    AVG(air_quality) AS avg_air_quality,
+                    AVG(soil_moisture) AS avg_soil_moisture
+                FROM api_sensorreading
+                WHERE device_id = %s AND timestamp >= %s AND timestamp <= %s
+                GROUP BY bucket
+                ORDER BY bucket ASC
+            """, [bucket_size, device_id, start_time, end_time])
+
+            results = cursor.fetchall()
+
+        # Format the results
+        data = [
+            {
+                "timestamp": row[0],
+                "temperature": row[1],
+                "humidity": row[2],
+                "light": row[3],
+                "air_quality": row[4],
+                "soil_moisture": row[5],
+            }
+            for row in results
+        ]
+        return Response(data)
+
+    def filter_queryset(self, queryset):
+        """
+        Override filter_queryset to bypass filtering for custom actions.
+        """
+        if self.action == 'aggregated_readings':
+            # Return the original queryset without applying filters
+            return queryset
+        return super().filter_queryset(queryset)
+
     def perform_create(self, serializer):
         # Save the sensor reading to the DB
         sensor_reading = serializer.save()

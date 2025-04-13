@@ -33,6 +33,7 @@ const LoginForm = () => {
     <form onSubmit={handleSubmit} className="space-y-4">
       {error && <p className="text-red-500">{error}</p>}
       <input
+        id="username"
         type="text"
         placeholder="Username"
         className="border p-2 w-full"
@@ -40,6 +41,7 @@ const LoginForm = () => {
         onChange={(e) => setUsername(e.target.value)}
       />
       <input
+        id="password"
         type="password"
         placeholder="Password"
         className="border p-2 w-full"

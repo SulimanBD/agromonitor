@@ -29,7 +29,12 @@ class Device(models.Model):
 
 
 class SensorReading(models.Model):
-    device = models.ForeignKey(Device, on_delete=models.CASCADE, db_index=True)  # Ensure indexed
+    device = models.ForeignKey(
+        Device,
+        to_field='device_id',  # Use the device_id field instead of the id field
+        on_delete=models.CASCADE,
+        db_index=True  # Ensure indexed
+    )
     timestamp = models.DateTimeField(db_index=True)  # Index for range filtering
 
     temperature = models.FloatField(null=True, blank=True)

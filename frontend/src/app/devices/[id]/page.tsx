@@ -142,6 +142,12 @@ const DevicePage = () => {
       ) : (
         <p className="text-[#264653] dark:text-[#e0e0e0]">Loading...</p>
       )}
+      <button
+        onClick={() => router.push(`/devices/${params?.id}/chart`)}
+        className="mt-10 px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 transition-colors"
+      >
+        View Historical Data
+      </button>
     </div>
   );
 };
