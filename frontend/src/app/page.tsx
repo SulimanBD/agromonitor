@@ -3,37 +3,28 @@
 import { useEffect, useState } from 'react';
 import useAuth from '@/hooks/useAuth';
 import DeviceList from './components/DeviceList';
+import { fetchDevices } from '@/lib/api'; // Import the centralized fetchDevices function
+import { Device } from '@/lib/types';
 
 const DevicesPage = () => {
   const isAuthenticated = useAuth(); // Centralized authentication
-  const [devices, setDevices] = useState([]);
+  const [devices, setDevices] = useState<Device[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     if (!isAuthenticated) return;
 
-    const token = localStorage.getItem('access_token');
-    fetch(`${process.env.NEXT_PUBLIC_DJANGO_URL}/api/devices/`, {
-      headers: { Authorization: `Bearer ${token}` },
-    })
-      .then((res) => {
-        if (res.status === 401) {
-          // Handle unauthorized response
-          localStorage.removeItem('access_token');
-          window.location.href = '/login'; // Redirect to login page
-          return;
-        }
-        return res.json();
-      })
-      .then((data) => {
-        if (data) {
-          setDevices(data.results);
-          setLoading(false);
-        }
-      })
-      .catch((err) => {
-        console.error('Error fetching devices:', err);
-      });
+    const fetchAllDevices = async () => {
+      try {
+        const devices = await fetchDevices(); // Use the centralized function
+        setDevices(devices);
+        setLoading(false);
+      } catch (error) {
+        console.error('Error fetching devices:', error);
+      }
+    };
+
+    fetchAllDevices();
   }, [isAuthenticated]);
 
   if (!isAuthenticated) return null;

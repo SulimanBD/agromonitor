@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import { useParams, useRouter } from 'next/navigation'; // Import useRouter
-import { fetchSensorData } from '@/lib/api';
+import { fetchSingleDeviceData } from '@/lib/api';
 import { Line } from 'react-chartjs-2';
 import useAuth from '@/hooks/useAuth';
 
@@ -16,6 +16,7 @@ import {
   Title,
   Tooltip,
   Legend,
+  Filler,
 } from 'chart.js';
 import { SensorReading } from '@/lib/types';
 
@@ -60,7 +61,7 @@ const ChartPage = () => {
         }
 
         const end = now.toISOString();
-        const data = await fetchSensorData(params.id as string, start, end);
+        const data = await fetchSingleDeviceData(params.id as string, start, end);
 
         if (data.length === 0) {
           console.warn('No data available for the selected time range.');
@@ -114,7 +115,7 @@ const ChartPage = () => {
                       label: function (context: { raw: number }) {
                         const value = context.raw; // Get the raw value
                         const unit = sensorUnits[sensor] || ''; // Get the unit for the sensor
-    return `${value} ${unit}`; // Append the unit to the value
+                        return `${value} ${unit}`; // Append the unit to the value
                       },
                     },
                   },
@@ -140,19 +141,14 @@ const ChartPage = () => {
 
   return (
     <div className="p-6 max-w-4xl mx-auto bg-[#f4f4f4] dark:bg-[#1e1e1e] rounded-lg shadow-md">
-{/* Header with Device ID */}
-      <h1 className="text-3xl font-bold text-[#264653] dark:text-[#e0e0e0] mb-6">
-      Charts for {params?.id}
-      </h1>
-
-      {/* Flex container for the buttons and time range selector */}
+      {/* Flex container for the buttons */}
       <div className="flex items-center justify-between mb-4">
         {/* Back to Real Time Readings Button */}
         <button
           onClick={() => router.push(`/devices/${params?.id}`)} // Navigate back to the device page
           className="px-4 py-2 bg-[#2a9d8f] text-white rounded hover:bg-[#21867a] transition"
         >
-          Back to Real Time
+          ← Back to Real Time Data
         </button>
 
         {/* Back to Device List Button */}
@@ -160,8 +156,15 @@ const ChartPage = () => {
           onClick={() => router.push(`/`)} // Navigate back to the device list
           className="px-4 py-2 bg-[#e76f51] text-white rounded hover:bg-[#d65a41] transition mx-4"
         >
-          Back to Device List
+          ☰ Back to Devices List
         </button>
+      </div>
+
+      {/* Header with Device ID */}
+      <div className="flex items-center justify-between mb-6">
+        <h1 className="text-3xl font-bold text-[#264653] dark:text-[#e0e0e0]">
+          Charts for {params?.id}
+        </h1>
 
         {/* Time Range Selector */}
         <div>

@@ -17,7 +17,10 @@ class SensorReadingViewSet(viewsets.ModelViewSet):
     filter_backends = []  # Disable filtering and ordering globally for this view
 
     @action(detail=False, methods=['get'])
-    def aggregated_readings(self, request):
+    def sngl_dvc_mult_sensor(self, request):
+        """
+        Fetch aggregated multi sensor readings for a single device.
+        """
         start = request.query_params.get('start')
         end = request.query_params.get('end')
         device_id = request.query_params.get('device__device_id')
@@ -65,6 +68,58 @@ class SensorReadingViewSet(viewsets.ModelViewSet):
                 "light": row[3],
                 "air_quality": row[4],
                 "soil_moisture": row[5],
+            }
+            for row in results
+        ]
+        return Response(data)
+
+    @action(detail=False, methods=['get'])
+    def mult_dvcs_sngl_sensor(self, request):
+        """
+        Fetch aggregated readings for multiple devices and a specific sensor type.
+        """
+        device_ids = request.query_params.getlist('device_ids[]')  # List of device IDs
+        sensor_type = request.query_params.get('sensor_type')  # Sensor type (e.g., temperature)
+        start = request.query_params.get('start')
+        end = request.query_params.get('end')
+        max_points = 50
+
+        # Validate input
+        if not device_ids or not sensor_type or not start or not end:
+            return Response({"error": "Missing required parameters: device_ids, sensor_type, start, or end"}, status=400)
+
+        # Parse and calculate bucket size
+        start_time = parse_datetime(start)
+        end_time = parse_datetime(end)
+
+        if not start_time or not end_time:
+            return Response({"error": "Invalid start or end time format"}, status=400)
+
+        total_seconds = (end_time - start_time).total_seconds()
+        bucket_size_seconds = max(total_seconds // max_points, 1)
+        bucket_size = f"{int(bucket_size_seconds)} seconds"
+
+        # Execute optimized SQL query
+        with connection.cursor() as cursor:
+            cursor.execute(f"""
+                SELECT
+                    time_bucket(%s, timestamp) AS bucket,
+                    device_id,
+                    AVG({sensor_type}) AS avg_value
+                FROM api_sensorreading
+                WHERE device_id = ANY(%s) AND timestamp >= %s AND timestamp <= %s
+                GROUP BY bucket, device_id
+                ORDER BY bucket ASC, device_id ASC
+            """, [bucket_size, device_ids, start_time, end_time])
+
+            results = cursor.fetchall()
+
+        # Format the results
+        data = [
+            {
+                "timestamp": row[0],
+                "device_id": row[1],
+                "avg_value": row[2],
             }
             for row in results
         ]

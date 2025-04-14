@@ -120,34 +120,48 @@ const DevicePage = () => {
 
   return (
     <div className="p-6 max-w-4xl mx-auto bg-[#f4f4f4] dark:bg-[#1e1e1e] rounded-lg shadow-md">
-      <button
-        onClick={() => router.push('/')}
-        className="mb-6 px-4 py-2 bg-[#2a9d8f] text-white rounded hover:bg-teal-600 transition-colors"
-      >
-        ← Back to Devices
-      </button>
-      <h1 className="text-3xl font-bold text-[#264653] dark:text-[#e0e0e0] mb-2">
+      {/* Flex container for the buttons */}
+      <div className="flex items-center justify-between mb-6">
+        {/* Back to Devices Button */}
+        <button
+          onClick={() => router.push('/')}
+          className="px-4 py-2 bg-[#2a9d8f] text-white rounded hover:bg-teal-600 transition-colors"
+        >
+          ← Back to Devices List
+        </button>
+
+        {/* View Historical Data Button */}
+        <button
+          onClick={() => router.push(`/devices/${params?.id}/chart`)}
+          className="px-4 py-2 bg-[#4a90e2] text-white rounded hover:bg-[#357ab8] transition-colors"
+        >
+          View Historical Data →
+        </button>
+      </div>
+
+      {/* Header */}
+      <h1 className="text-3xl font-bold text-[#264653] dark:text-[#e0e0e0] mb-6">
         Device: {deviceIdFromData || '...'}
       </h1>
+
+      {/* Last Updated */}
       <p className="text-lg text-[#8d6e63] dark:text-[#a8a8a8] mb-6">
         Last Updated: <span className="font-mono text-xl text-[#2a9d8f]">{formatTimestamp(timestamp || '')}</span>
       </p>
+
+      {/* Connection Status */}
       {!isConnected && (
         <p className="text-red-500 font-semibold mb-4">Reconnecting to the server...</p>
       )}
+
+      {/* Sensor Data */}
       {sensorData ? (
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
           {renderSensorData(sensorData)}
         </div>
       ) : (
-        <p className="text-[#264653] dark:text-[#e0e0e0]">Loading...</p>
+        <p className="text-[#264653] dark:text-[#e0e0e0]">No new data coming in...</p>
       )}
-      <button
-        onClick={() => router.push(`/devices/${params?.id}/chart`)}
-        className="mt-10 px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 transition-colors"
-      >
-        View Historical Data
-      </button>
     </div>
   );
 };
