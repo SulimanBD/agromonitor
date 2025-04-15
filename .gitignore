@@ -4,9 +4,16 @@ ENV/
 env/
 .venv/
 
+# Python cache files
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+
 # .env files
 .env
 .env.*
+!.env.example
 
 # IDEs and OS
 .vscode/
