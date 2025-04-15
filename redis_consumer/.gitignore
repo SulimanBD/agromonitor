@@ -1,0 +1,27 @@
+# Virtual environment
+.venv/
+
+# Python bytecode files
+*.pyc
+*.pyo
+__pycache__/
+
+# Redis related
+redis_data/
+
+# Django related
+*.log
+*.sqlite3
+db.sqlite3
+
+# Environment variables file
+.env
+
+# IDE and editor related
+.vscode/
+.idea/
+*.swp
+
+# OS generated files
+.DS_Store
+Thumbs.db
