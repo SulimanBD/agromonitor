@@ -142,7 +142,7 @@ class SensorReadingViewSet(viewsets.ModelViewSet):
         broadcast_to_websocket(sensor_reading)
 
 class DeviceViewSet(viewsets.ModelViewSet):
-    queryset = Device.objects.all()
+    queryset = Device.objects.all().order_by('id')
     serializer_class = DeviceSerializer
 
 class CustomTokenObtainPairView(TokenObtainPairView):
