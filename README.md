@@ -8,10 +8,10 @@ AgroMonitoring is a real-time environmental monitoring system designed for agric
 
 This project is structured as a monorepo, containing the following components:
 
+- **simulator/** - Simulated IoT sensor data to publish MQTT and then forward to Redis.
+- **redis_consumer/** - A Python service that acts as a bridge between Redis streams and the Django API.
 - **backend/** - Django REST API that handles sensor data and serves it to the frontend.
-- **frontend/** - React-based dashboard for visualizing the data.
-- **simulator/** - Simulated IoT sensor data to test the system.
-- **redis_bridge/** - A Python service that acts as a bridge between MQTT and Redis streams.
+- **frontend/** - React Next.js-based dashboard for visualizing the data.
 
 ---
 
@@ -19,19 +19,20 @@ This project is structured as a monorepo, containing the following components:
 
 - **Backend:**
   - Django
-  - Django REST Framework (DRF)
-  - PostgreSQL
-  - Docker (for containerization)
+  - PostgreSQL (TimescaleDB)
 
 - **Frontend:**
   - React
-  - Chart.js / Recharts / Nivo (for data visualization)
+  - Next.js
+  - Tailwind CSS (for styling)
+  - Chart.js (for data visualization)
 
 - **IoT:**
   - MQTT (for message brokering)
   - Redis Streams (for real-time data processing)
 
 - **Cloud (Future):**
+  - Docker
   - AWS (S3, ECS, Lambda)
 
 ---
