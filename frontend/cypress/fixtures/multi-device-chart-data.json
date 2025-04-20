@@ -1,0 +1,16 @@
+[
+    { "device_id": "greenhouse_hub_1", "avg_value": 22.5, "timestamp": "2025-04-19T12:00:00Z" },
+    { "device_id": "greenhouse_hub_1", "avg_value": 23.0, "timestamp": "2025-04-19T12:10:00Z" },
+    { "device_id": "greenhouse_hub_1", "avg_value": 22.8, "timestamp": "2025-04-19T12:20:00Z" },
+    { "device_id": "greenhouse_hub_1", "avg_value": 23.2, "timestamp": "2025-04-19T12:30:00Z" },
+    { "device_id": "greenhouse_hub_1", "avg_value": 22.7, "timestamp": "2025-04-19T12:40:00Z" },
+    { "device_id": "greenhouse_hub_1", "avg_value": 22.9, "timestamp": "2025-04-19T12:50:00Z" },
+  
+    { "device_id": "garden_hub_2", "avg_value": 20.1, "timestamp": "2025-04-19T12:00:00Z" },
+    { "device_id": "garden_hub_2", "avg_value": 20.4, "timestamp": "2025-04-19T12:10:00Z" },
+    { "device_id": "garden_hub_2", "avg_value": 20.3, "timestamp": "2025-04-19T12:20:00Z" },
+    { "device_id": "garden_hub_2", "avg_value": 20.0, "timestamp": "2025-04-19T12:30:00Z" },
+    { "device_id": "garden_hub_2", "avg_value": 20.2, "timestamp": "2025-04-19T12:40:00Z" },
+    { "device_id": "garden_hub_2", "avg_value": 20.5, "timestamp": "2025-04-19T12:50:00Z" }
+  ]
+  
