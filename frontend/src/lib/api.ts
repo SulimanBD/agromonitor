@@ -16,7 +16,7 @@ export async function fetchDevices(): Promise<Device[]> {
     if (response.status === 401) {
       // Handle unauthorized response
       localStorage.removeItem('access_token');
-      window.location.href = '/login'; // Redirect to login page
+      window.location.assign('/login'); // Redirect to login page
       return [];
     }
     throw new Error('Failed to fetch devices');
@@ -58,7 +58,8 @@ export async function fetchSingleDeviceData(deviceId: string, start: string, end
     if (response.status === 401) {
       // Handle unauthorized response
       localStorage.removeItem("access_token"); // Clear invalid token
-      window.location.href = "/login"; // Redirect to login page
+      window.location.assign('/login'); // Redirect to login page
+      return [];
     }
     throw new Error("Failed to fetch sensor data");
   }

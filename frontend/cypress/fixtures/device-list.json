@@ -1,0 +1,17 @@
+{
+    "results": [
+      {
+        "device_id": "greenhouse_hub_1",
+        "name": "Greenhouse Hub 1",
+        "location": "Greenhouse",
+        "status": "active"
+      },
+      {
+        "device_id": "garden_hub_2",
+        "name": "Garden Hub 2",
+        "location": "Garden",
+        "status": "inactive"
+      }
+    ]
+  }
+  

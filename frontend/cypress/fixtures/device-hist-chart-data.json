@@ -1,0 +1,51 @@
+[
+    {
+      "timestamp": "2025-04-20T10:00:00Z",
+      "temperature": 22.5,
+      "humidity": 45,
+      "air_quality": 80,
+      "light": 500,
+      "soil_moisture": 30
+    },
+    {
+      "timestamp": "2025-04-20T10:10:00Z",
+      "temperature": 22.7,
+      "humidity": 44,
+      "air_quality": 78,
+      "light": 510,
+      "soil_moisture": 32
+    },
+    {
+      "timestamp": "2025-04-20T10:20:00Z",
+      "temperature": 23.0,
+      "humidity": 43,
+      "air_quality": 76,
+      "light": 520,
+      "soil_moisture": 33
+    },
+    {
+      "timestamp": "2025-04-20T10:30:00Z",
+      "temperature": 23.2,
+      "humidity": 42,
+      "air_quality": 75,
+      "light": 530,
+      "soil_moisture": 35
+    },
+    {
+      "timestamp": "2025-04-20T10:40:00Z",
+      "temperature": 23.3,
+      "humidity": 41,
+      "air_quality": 74,
+      "light": 540,
+      "soil_moisture": 36
+    },
+    {
+      "timestamp": "2025-04-20T10:50:00Z",
+      "temperature": 23.5,
+      "humidity": 40,
+      "air_quality": 72,
+      "light": 550,
+      "soil_moisture": 37
+    }
+  ]
+  
