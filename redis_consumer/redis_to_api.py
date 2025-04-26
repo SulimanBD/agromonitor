@@ -29,9 +29,24 @@ def forward_to_django(payload):
     except Exception as e:
         logger.error("Error posting to Django API", exc_info=True)
 
+def wait_for_backend():
+    """Wait until the backend is available."""
+    while True:
+        try:
+            response = requests.get(API_ENDPOINT)
+            if response.status_code == 200:
+                logger.info("Backend is available!")
+                break
+        except requests.exceptions.ConnectionError:
+            logger.warning("Backend not available, retrying in 5 seconds...")
+            time.sleep(5)
+
 def consume_stream():
     redis_conn = get_redis_connection()
     logger.info(f"Listening to Redis stream: {REDIS_STREAM}")
+
+    # Wait for backend to be available
+    wait_for_backend()
 
     # Retrieve last processed ID from Redis
     last_id = get_last_id(redis_conn)
@@ -49,7 +64,7 @@ def consume_stream():
                         decoded_data = {
                             k: float(v) if k in ['temperature', 'humidity', 'soil_moisture', 'air_quality']
                             else int(v) if k == 'light'
-                            else v                            
+                            else v 
                             for k, v in data.items()
                         }
 

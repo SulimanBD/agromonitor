@@ -1,0 +1,17 @@
+# Ignore cache and build-related files
+# .next/
+# node_modules/
+
+# Ignore Cypress test files and folders
+cypress/
+cypress.config.ts
+
+# Cannot ignore environment files
+# because used at built time
+
+# Ignore Git-related files
+.git/
+.gitignore
+
+# Ignore documentation and README files
+README.md

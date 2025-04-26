@@ -1,5 +1,6 @@
 // __tests__/api.test.ts
 import { fetchDevices, fetchMultiDeviceSensorData, fetchSingleDeviceData } from '@/lib/api';
+import { expect } from '@jest/globals';
 
 global.fetch = jest.fn();
 
@@ -45,8 +46,14 @@ describe('API Calls', () => {
   
     // Mock window.location.assign
     const assignMock = jest.fn();
-    delete (window as any).location; // Remove default location to avoid readonly errors
-    (window as any).location = { assign: assignMock };
+    // Type-safe way to override window.location
+    Object.defineProperty(window, 'location', {
+      value: {
+        ...window.location,
+        assign: assignMock,
+      },
+      writable: true,
+    });
   
     await fetchDevices();
   

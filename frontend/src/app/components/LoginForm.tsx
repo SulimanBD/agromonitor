@@ -26,6 +26,7 @@ const LoginForm = () => {
       router.push('/');
     } catch (err) {
       setError('Invalid credentials');
+      console.log(err);
     }
   };
 

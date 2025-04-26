@@ -1,0 +1,128 @@
+services:
+  # Backend service (Django API)
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: backend
+    environment:
+      - DB_NAME=${DB_NAME}
+      - DB_USER=${DB_USER}
+      - DB_PASSWORD=${DB_PASSWORD}
+      - DB_HOST=postgres  # Postgres container name (you can adjust it if needed)
+      - DB_PORT=5432
+      - REDIS_HOST=redis
+      - REDIS_PORT=6379
+      - REDIS_STREAM=sensor_readings
+      - FRONTEND_URL=http://frontend:3000  # URL of the frontend service
+      - API_BASE_URL=backend  # URL of the backend service
+      - DJANGO_SETTINGS_MODULE=config.settings
+      - DJANGO_SECRET_KEY=${DJANGO_SECRET_KEY}
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_started
+    ports:
+      - "8000:8000"
+    links:
+      - postgres:postgres
+    networks:
+      - app_network
+
+  # Frontend service (Next.js)
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: frontend
+    ports:
+      - "3000:3000"
+    networks:
+      - app_network
+    depends_on:
+      - backend
+
+  # Simulator service (publishes data to MQTT)
+  simulator:
+    build:
+      context: ./simulator
+      dockerfile: Dockerfile
+    container_name: simulator
+    environment:
+      - MQTT_BROKER=mqtt_broker  # The name of the MQTT broker container
+      - MQTT_PORT=1884
+      # - MQTT_TOPIC=sensors/data
+      - REDIS_HOST=redis
+      - REDIS_PORT=6379
+    depends_on:
+      - redis
+      - mqtt_broker
+    networks:
+      - app_network
+
+  # Redis service (for caching and data streaming)
+  redis:
+    image: redis:latest
+    container_name: redis
+    ports:
+      - "6379:6379"
+    networks:
+      - app_network
+
+  # MQTT Broker service (to handle message publishing and subscriptions)
+  mqtt_broker:
+    image: eclipse-mosquitto:latest
+    container_name: mqtt_broker
+    ports:
+      - "1884:1884"
+    volumes:
+      - ./mosquitto.conf:/mosquitto/config/mosquitto.conf
+    networks:
+      - app_network
+
+  # Redis Consumer (to fetch data from Redis and send it to Django)
+  redis_consumer:
+    build:
+      context: ./redis_consumer
+      dockerfile: Dockerfile
+    container_name: redis_consumer
+    environment:
+      - REDIS_HOST=redis
+      - REDIS_PORT=6379
+      - REDIS_STREAM=sensor_readings
+      - API_ENDPOINT=http://backend:8000/api/readings/
+    depends_on:
+      - redis
+      - backend
+    networks:
+      - app_network
+
+  # TimescaleDB service (PostgreSQL with Timescale extension)
+  postgres:
+    image: timescale/timescaledb:latest-pg16  # TimescaleDB image with PostgreSQL 12
+    container_name: postgres
+    environment:
+      POSTGRES_DB: ${DB_NAME}
+      POSTGRES_USER: ${DB_USER}
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+      PGDATA: /var/lib/postgresql/data/pgdata  # TimescaleDB default data directory
+    # command: ["/bin/bash", "-c", "apt-get update && apt-get install -y locales && locale-gen en_US.UTF-8 && exec postgres"]
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 10s
+      retries: 5
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data  # Persist data across restarts
+    networks:
+      - app_network
+
+volumes:
+  postgres_data:
+    driver: local
+
+networks:
+  app_network:
+    driver: bridge

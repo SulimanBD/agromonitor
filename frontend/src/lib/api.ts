@@ -42,11 +42,11 @@ export async function fetchSingleDeviceData(deviceId: string, start: string, end
   }
 
   // Convert start and end to GMT+1
-  const startGMTPlus1 = new Date(new Date(start).getTime() + 1 * 60 * 60 * 1000).toISOString();
-  const endGMTPlus1 = new Date(new Date(end).getTime() + 1 * 60 * 60 * 1000).toISOString();
+  // const startGMTPlus1 = new Date(new Date(start).getTime() + 1 * 60 * 60 * 1000).toISOString();
+  // const endGMTPlus1 = new Date(new Date(end).getTime() + 1 * 60 * 60 * 1000).toISOString();
 
   const response = await fetch(
-    `${process.env.NEXT_PUBLIC_DJANGO_API_URL}/readings/sngl_dvc_mult_sensor/?device__device_id=${deviceId}&start=${startGMTPlus1}&end=${endGMTPlus1}`,
+    `${process.env.NEXT_PUBLIC_DJANGO_API_URL}/readings/sngl_dvc_mult_sensor/?device__device_id=${deviceId}&start=${start}&end=${end}`,
     {
       headers: {
         Authorization: `Bearer ${token}`,
