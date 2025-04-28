@@ -1,9 +1,10 @@
 'use client';
 
+import { Device } from '@/lib/types';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 
-const DeviceList = ({ devices }: { devices: any[] }) => {
+const DeviceList = ({ devices }: { devices: Device[] }) => {
   const router = useRouter();
 
   if (!Array.isArray(devices)) {

@@ -14,6 +14,7 @@ import {
   Title,
   Tooltip,
   Legend,
+  ChartData
 } from 'chart.js';
 
 // Register Chart.js components
@@ -26,7 +27,7 @@ const ChartPage = () => {
   const [selectedDevices, setSelectedDevices] = useState<string[]>([]); // Selected devices
   const [allDevices, setAllDevices] = useState<string[]>([]); // List of all devices
   const [timeRange, setTimeRange] = useState('hour'); // Default time range
-  const [chartData, setChartData] = useState<any>(null);
+  const [chartData, setChartData] = useState<ChartData<'line'>>({labels: [],datasets: [], });
   const [loading, setLoading] = useState(true);
 
   // Fetch the list of all devices on component mount

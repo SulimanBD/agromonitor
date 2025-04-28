@@ -2,7 +2,9 @@ import React from 'react';
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import DeviceList from '../DeviceList';
+import '@testing-library/jest-dom';
 import { useRouter } from 'next/navigation';
+import { Device } from '@/lib/types';
 
 // ✅ Mock the Next.js router
 jest.mock('next/navigation', () => ({
@@ -11,13 +13,15 @@ jest.mock('next/navigation', () => ({
 
 // ✅ Mock next/link to prevent navigation errors
 jest.mock('next/link', () => {
-    return ({ children }: { children: React.ReactNode }) => <div>{children}</div>;
-  });
+  const Link = ({ children }: { children: React.ReactNode }) => <div>{children}</div>;
+  Link.displayName = 'MockNextLink';
+  return Link;
+});
   
 
 const mockDevices = [
-  { device_id: 'abc123', location: 'Greenhouse', status: 'active' },
-  { device_id: 'xyz456', location: 'Indoor', status: 'inactive' },
+  { device_id: 'abc123', name: "", location: 'Greenhouse', status: 'active' },
+  { device_id: 'xyz456', name: "", location: 'Indoor', status: 'inactive' },
 ];
 
 describe('DeviceList Component', () => {
@@ -35,7 +39,7 @@ describe('DeviceList Component', () => {
 
   it('renders a navigation button to chart page', async () => {
     const pushMock = jest.fn(); // Mock the `push` function
-    const useRouterMock = require('next/navigation').useRouter;
+    const useRouterMock = useRouter as jest.Mock;
     useRouterMock.mockReturnValue({
       push: pushMock,
     });
@@ -50,7 +54,8 @@ describe('DeviceList Component', () => {
   });
 
   it('renders message if no devices are passed', () => {
-    render(<DeviceList devices={null as any} />);
+    render(<DeviceList devices={null as unknown as Device[]} />);
     expect(screen.getByText(/no devices found/i)).toBeInTheDocument();
   });
+
 });

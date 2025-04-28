@@ -21,13 +21,17 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 # See https://docs.djangoproject.com/en/2.1/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = '42lhl(^(yd9bwfo#x%p&)42cy#cd$+8(=*i_erg+1126rd=cli'
+SECRET_KEY = config('DJANGO_SECRET_KEY', 
+                    default='42lhl(^(yd9bwfo#x%p&)42cy#cd$+8(=*i_erg+1126rd=cli')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
 
-ALLOWED_HOSTS = []
-
+ALLOWED_HOSTS = [
+    config('API_BASE_URL'),
+    config('DB_HOST'),
+    'localhost', '127.0.0.1'
+]
 
 # Application definition
 
@@ -158,5 +162,6 @@ REST_FRAMEWORK = {
 
 
 CORS_ALLOWED_ORIGINS = [
-    "http://localhost:3000",  # Next.js frontend URL
+    config('FRONTEND_URL'),  # Next.js frontend URL
+    "http://localhost:3000"
 ]

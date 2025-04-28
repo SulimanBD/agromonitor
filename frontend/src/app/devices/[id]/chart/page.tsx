@@ -16,7 +16,7 @@ import {
   Title,
   Tooltip,
   Legend,
-  Filler,
+  ChartData,
 } from 'chart.js';
 import { SensorReading } from '@/lib/types';
 
@@ -27,7 +27,7 @@ const ChartPage = () => {
   const isAuthenticated = useAuth(); // Ensure authentication
   const params = useParams(); // Get the device ID from params
   const router = useRouter(); // Initialize the router
-  const [chartData, setChartData] = useState<Record<string, any>>({});
+  const [chartData, setChartData] = useState<Record<string, ChartData>>({});
   const [loading, setLoading] = useState(true);
   const [timeRange, setTimeRange] = useState('hour'); // Default time range
 
@@ -79,10 +79,17 @@ const ChartPage = () => {
           light: 'lx',
           soil_moisture: '%',
         };
-        const newChartData: Record<string, any> = {};
+  
+        const newChartData: Record<string, ChartData<"line", (number | null)[], unknown>> = {};
 
         sensors.forEach((sensor) => {
-          const sensorData = data.map((reading: SensorReading) => reading[sensor]);
+          const sensorData = data.map((reading: SensorReading) => {
+            const value = reading[sensor];
+            if (value === null || value === undefined) return null;
+            const parsed = typeof value === 'string' ? parseFloat(value) : value;
+            return isNaN(parsed) ? null : parsed;
+          });
+        
           const labels = data.map((reading) => {
             const date = new Date(reading.timestamp);
             return date.toLocaleString('en-GB', {
@@ -95,7 +102,7 @@ const ChartPage = () => {
           });
 
           // Only include the chart if there is valid data for the sensor
-          if (sensorData.some((value) => value !== null && value !== undefined)) {
+          if (sensorData.some((value) => value !== null)) {
             newChartData[sensor] = {
               labels,
               datasets: [
@@ -108,20 +115,9 @@ const ChartPage = () => {
                   tension: 0.4, // Optional: Add smooth curves to the chart
                 },
               ],
-              options: {
-                plugins: {
-                  tooltip: {
-                    callbacks: {
-                      label: function (context: { raw: number }) {
-                        const value = context.raw; // Get the raw value
-                        const unit = sensorUnits[sensor] || ''; // Get the unit for the sensor
-                        return `${value} ${unit}`; // Append the unit to the value
-                      },
-                    },
-                  },
-                },
-              },
-            };
+              // 👇 Force it to be recognized as line chart data
+              type: "line",
+            } as ChartData<"line", (number | null)[], unknown>;
           }
         });
 
@@ -193,8 +189,8 @@ const ChartPage = () => {
             <h2 className="text-2xl font-bold text-[#264653] dark:text-[#e0e0e0] mb-4">
               {sensor.replace('_', ' ').toUpperCase()}
             </h2>
-            <Line data={data} />
-          </div>
+            <Line data={data as ChartData<"line", (number | null)[], unknown>} />
+            </div>
         ))
       ) : (
         <p>No data available for the selected time range.</p>
