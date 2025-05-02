@@ -8,7 +8,9 @@ module.exports = {
   },
   transform: {
     '^.+\\.(ts|tsx)$': ['ts-jest', {
-      tsconfig: 'tsconfig.json',
+      tsconfig: {
+        jsx: 'react-jsx', // Explicitly override JSX mode
+      },
     }],
   },
   moduleFileExtensions: ['ts', 'tsx', 'js', 'jsx', 'json', 'node'],
