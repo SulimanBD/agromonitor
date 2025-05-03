@@ -3,14 +3,11 @@ FROM node:22-slim AS builder
 
 WORKDIR /app
 
-# Install dependencies
-COPY package*.json ./
-COPY tsconfig.json ./
-COPY next.config.ts ./
-RUN npm ci --omit=dev
-
-# Copy rest of the project (including src/, public/, etc.)
+# Copy the project (including src/, public/, etc.)
 COPY . .
+
+# Install dependencies
+RUN npm ci --omit=dev
 
 # Build the Next.js project
 RUN npm run build
@@ -28,6 +25,7 @@ RUN npm ci --omit=dev
 COPY --from=builder /app/public ./public
 COPY --from=builder /app/.next ./.next
 COPY --from=builder /app/next.config.ts ./next.config.ts
+COPY --from=builder /app/tsconfig.json tsconfig.json
 COPY --from=builder /app/src ./src
 
 # Expose port and run
