@@ -82,7 +82,6 @@ jobs:
     runs-on: ubuntu-latest
     container:
       image: cypress/browsers:22.12.0
-      options: root
     steps:
       - uses: actions/checkout@v3
 
@@ -121,4 +120,4 @@ jobs:
 
       - name: Build all Docker images
         run: |
-          docker-compose -f docker-compose.yml build
+          docker compose -f docker-compose.yml build
