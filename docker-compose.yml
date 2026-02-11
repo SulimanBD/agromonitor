@@ -100,7 +100,7 @@ services:
 
   # TimescaleDB service (PostgreSQL with Timescale extension)
   postgres:
-    image: timescale/timescaledb:latest-pg16  # TimescaleDB image with PostgreSQL 12
+    image: timescale/timescaledb:latest-pg16  # TimescaleDB image with PostgreSQL 16
     container_name: postgres
     environment:
       POSTGRES_DB: ${DB_NAME}
