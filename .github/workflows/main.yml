@@ -2,9 +2,13 @@ name: AgroMonitoring CI Pipeline
 
 on:
   push:
-    branches: [ci_cd_auto]
+    branches:
+      - main
+      - dev
   pull_request:
-    branches: [ci_cd_auto]
+    branches:
+      - main
+      - dev
 
 jobs:
   backend-tests:
