@@ -22,10 +22,7 @@ ENV/
 .venv/
 
 # Migrations
-**/migrations/*.pyc
-**/migrations/*.pyo
 **/migrations/__pycache__/
-**/migrations/*.py
 
 # Environment variables
 .env
