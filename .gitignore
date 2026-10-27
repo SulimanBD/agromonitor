@@ -35,3 +35,7 @@ frontend/node_modules/
 ehthumbs.db
 Icon?
 Desktop.ini
+
+# Terraform
+.terraform/
+terraform.tfstate

@@ -31,7 +31,10 @@ const DevicePage = () => {
     let reconnectTimeout: NodeJS.Timeout;
 
     const connectWebSocket = () => {
-      socket = new WebSocket(`ws://localhost:8000/ws/sensor_readings/${params?.id}/`);
+
+      const wsProtocol = window.location.protocol === 'https:' ? 'wss://' : 'ws://';
+      const wsHost = window.location.hostname;
+      socket = new WebSocket(`${wsProtocol}${wsHost}:8000/ws/sensor_readings/${params?.id}/`);
 
       socket.onopen = () => {
         console.log('WebSocket connected');
